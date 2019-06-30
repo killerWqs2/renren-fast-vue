@@ -38,6 +38,8 @@
 
 <script>
   import { getUUID } from '@/utils'
+  import qs from 'qs'
+
   export default {
     data () {
       return {
@@ -70,22 +72,29 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl('/sys/login'),
+              url: this.$http.adornUrl('/login'),
               method: 'post',
-              data: this.$http.adornData({
+              // 这里应该用form表单方式提交
+              data: qs.stringify({
                 'username': this.dataForm.userName,
                 'password': this.dataForm.password,
                 'uuid': this.dataForm.uuid,
                 'captcha': this.dataForm.captcha
-              })
+              }, { indices: false }),
+              headers: { 'content-type': 'application/x-www-form-urlencoded' }
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              // console.log(data)
+              // if (data && data.code === 0) {
+              //   this.$cookie.set('token', data.token)
+              //   this.$router.replace({ name: 'home' })
+              // } else {
+              //   this.getCaptcha()
+              //   this.$message.error(data.msg)
+              // }
+              //  这个是成功的回调
+                console.info(data)
                 this.$cookie.set('token', data.token)
                 this.$router.replace({ name: 'home' })
-              } else {
-                this.getCaptcha()
-                this.$message.error(data.msg)
-              }
             })
           }
         })
